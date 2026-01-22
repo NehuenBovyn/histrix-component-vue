@@ -25,7 +25,7 @@
         <b>{{ rowSchema.label }}</b>
       </div>
     </div>
-    <div v-if="fieldComponent === 'HistrixApp'">
+    <div v-if="fieldComponent?.name === 'HistrixApp'">
       <slot name="slot-top-field-histrixapp" :props="localValue" />
     </div>
     <div class="content-field">
@@ -267,7 +267,7 @@
 </template>
 
 <script>
-import { date } from 'quasar';
+import { date, QInput, QOptionGroup, QFile, QCheckbox, QToggle, QEditor, QSelect } from 'quasar';
 
 import useApi from '../services/histrixApi.js';
 import { decimal, email, maxLength, required, helpers } from '@vuelidate/validators';
@@ -845,7 +845,7 @@ export default {
       return { ...this.schema, ...this.rowSchema };
     },
     clearable() {
-      return this.fieldComponent === 'q-select' && this.fieldSchema.innerContainer.empty === true;
+      return this.fieldComponent?.name === 'QSelect' && this.fieldSchema.innerContainer.empty === true;
     },
     inputClass() {
       return `text-${this.fieldSchema.align}`;
@@ -983,19 +983,19 @@ export default {
       let component = 'q-input';
       switch (this.histrixType) {
         case 'radio':
-          component = 'q-option-group';
+          component = QOptionGroup;
           break;
         case 'q-file':
-          component = 'q-file';
+          component = QFile;
           break;
         case 'check':
-          component = 'q-checkbox';
+          component = QCheckbox;
           break;
         case 'toggle':
-          component = 'q-toggle';
+          component = QToggle;
           break;
         case 'q-editor':
-          component = 'q-editor';
+          component = QEditor;
           this.toolbar = [
             [
               {
@@ -1062,16 +1062,16 @@ export default {
           */
           break;
         case 'q-input':
-          component = 'q-input';
+          component = QInput;
           break;
         case 'q-select':
-          component = 'q-select';
+          component = QSelect;
           break;
         case 'object':
-          component = 'HistrixApp';
+          component = defineAsyncComponentCompat(() => import('./HistrixApp.vue'))
           break;
         default:
-          component = 'q-input';
+          component = QInput;
           break;
       }
       return component;
@@ -1090,7 +1090,7 @@ export default {
       if (this.isDateTime) {
         return 'text';
       }
-      if (this.fieldComponent === 'q-select' && this.hasOptions === true) {
+      if (this.fieldComponent?.name === 'QSelect' && this.hasOptions === true) {
         return 'text';
       }
       if (this.fieldSchema.TipoDato === 'integer') {
